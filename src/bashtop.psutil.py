@@ -32,7 +32,8 @@ allowed_commands: Tuple[str] = (
 	'get_net',
 	'get_cmd_out',
 	'get_sensors',
-	'get_sensors_check'
+	'get_sensors_check',
+	'get_ms'
 	)
 command: str = ''
 cpu_count: int = psutil.cpu_count()
@@ -46,27 +47,42 @@ def get_cmd_out(cmd: str):
 	'''Save bash the trouble of creating child processes by running through python instead'''
 	print(subprocess.check_output(cmd, shell=True, universal_newlines=True).rstrip())
 
+def get_ms():
+	'''Get current epoch millisecond'''
+	t = str(time.time()).split(".")
+	print(f'{t[0]}{t[1][:3]}')
+
 def get_sensors():
 	'''A clone of "sensors" but using psutil'''
 	temps = psutil.sensors_temperatures()
 	if not temps:
 		return
-	for name, entries in temps.items():
-		print(name)
-		for entry in entries:
-			print(f'{entry.label or name}: {entry.current}°C (high = {entry.high}°C, crit = {entry.critical}°C)')
-		print()
+	try:
+		for name, entries in temps.items():
+			print(name)
+			for entry in entries:
+				print(f'{entry.label or name}: {entry.current}°C (high = {entry.high}°C, crit = {entry.critical}°C)')
+			print()
+	except:
+		pass
 
 def get_sensors_check():
 	'''Check if get_sensors() output contains accepted CPU temperature values'''
 	if not hasattr(psutil, "sensors_temperatures"): print("false"); return
-	temps = psutil.sensors_temperatures()
+	try:
+		temps = psutil.sensors_temperatures()
+	except:
+		pass
+		print("false"); return
 	if not temps: print("false"); return
-	for _, entries in temps.items():
-		for entry in entries:
-			if entry.label.startswith(('Package', 'Core 0', 'Tdie')):
-				print("true")
-				return
+	try:
+		for _, entries in temps.items():
+			for entry in entries:
+				if entry.label.startswith(('Package', 'Core 0', 'Tdie')):
+					print("true")
+					return
+	except:
+		pass
 	print("false")
 
 def get_cpu_name():
@@ -105,8 +121,8 @@ def get_cpu_name():
 
 def get_cpu_cores():
 	'''Get number of CPU cores and threads'''
-	cores: int = psutil.cpu_count(logical=True)
-	threads: int = psutil.cpu_count(logical=False)
+	cores: int = psutil.cpu_count(logical=False)
+	threads: int = psutil.cpu_count(logical=True)
 	print(f'{cores} {threads if threads else cores}')
 
 def get_cpu_usage():
@@ -210,11 +226,14 @@ def get_proc(sorting='cpu lazy', tree=False, prog_len=0, arg_len=0, search='', r
 	print(f"{'Pid:':>7} {'Program:':<{prog_len}}", f"{'Arguments:':<{arg_len-4}}" if arg_len else '', f"{'Threads:' if arg_len else ' Tr:'} {'User:':<9}Mem%{'Cpu%':>11}", sep='')
 
 	for p in sorted(psutil.process_iter(['pid', 'name', 'cmdline', 'num_threads', 'username', 'memory_percent', 'cpu_percent', 'cpu_times', 'create_time'], err), key=lambda p: eval(sort_cmd), reverse=reverse):
-		if p.info['name'] == 'idle':
+		if p.info['name'] == 'idle' or p.info['name'] == err or p.info['pid'] == err:
 			continue
-		if p.info['cpu_times'] == err:
+		if p.info['cmdline'] == err:
+			p.info['cmdline'] = ""
+		if p.info['username'] == err:
+			p.info['username'] = "?"
+		if p.info['num_threads'] == err:
 			p.info['num_threads'] = 0
-			p.info['cmdline'] = ''
 		if search:
 			found = False
 			for value in [ p.info['name'], ' '.join(p.info['cmdline']), str(p.info['pid']), p.info['username'] ]:
@@ -271,6 +290,8 @@ def proc_tree(width: int, sorting: str = 'cpu lazy', reverse: bool = True, max_l
 		if getinfo and cont:
 			if getinfo['cpu_times'] == err:
 				getinfo['num_threads'] = 0
+			if p.info['username'] == err:
+					p.info['username'] = "?"
 			cpu = getinfo['cpu_percent'] if proc_per_cpu else (getinfo['cpu_percent'] / psutil.cpu_count())
 			print(f"{getinfo['num_threads']:>4} " if getinfo['num_threads'] < 1000 else '999> ',
 				f"{getinfo['username']:<9.9}" if len(getinfo['username']) < 10 else f"{getinfo['username'][:8]:<8}+",
@@ -378,7 +399,8 @@ while command != 'quit':
 			exec(command)
 		except Exception as e:
 			pass
-			print('/ERROR', '\n', command, '\n', e)
+			print()
+			print('/ERROR')
 			print(f'PSUTIL ERROR! Command: {command}\n{e}', file=sys.stderr)
 	else:
 		continue

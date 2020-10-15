@@ -1,5 +1,70 @@
 # Changelog
 
+## v0.9.25
+
+* Fixed: Crash when using "/proc" data collection and filesystem type is 9p, by @bolapara
+
+## v0.9.24
+
+* Fixed: Psutil script crash on OSX
+* Fixed: Error handling for malformed osx-cpu-temp output
+
+## v0.9.23
+
+* Fixed: kill/terminate/interrupt process not working in OsX and FreeBSD
+
+## v0.9.22
+
+* Added: Added handler for mktemp failure for psutil script
+* Removed: Secondary mktemp command for psutil script
+* Fixed: Insecure test import of psutil changed
+
+## v0.9.21
+
+* Changed: Config file comments for theme locations
+* Added: Check for correct theme file path prefix
+* Added: Support for application cursor mode input
+* Fixed: Incorrect value calculation for reversed proc gradient
+
+## v0.9.20
+
+* Fixed: Psutil script security issue when placed directly in temp folder
+
+## v0.9.19
+
+* Added: Option for timestamps with python on bash < 5
+* Changed: Reverted "date" command timestamps to not using fifo
+* Added missing # from hex value in monokai theme
+
+## v0.9.18
+
+* Fixed: Errors caused by process scroll change
+* Fixed: Process graph creation ignored for process below 0.5%
+
+## v0.9.17
+
+* Changed: Process list now scrolls instead of "page jump" and shows number of processes instead of number of pages
+* Fixed: Inverted gradient on dark text in processes box
+
+## v0.9.16
+
+* Fixed: Errors in v0.9.15 psutil disk collection fix
+* Added: Additional graph creation error checks
+
+## v0.9.15
+
+* Fixed: Psutil error on disk collection now fallback to df and iostat
+
+## v0.9.14
+
+* Added: Additional processes error checking
+* Added: Additional sensors error checking
+* Added: Additional psutil error checking
+
+## v0.9.13
+
+* Added: More robust psutil error handling
+
 ## v0.9.12
 
 * Changed: Psutil data collection now runs a python script in a coprocess taking commands and sending output over coproc pipes

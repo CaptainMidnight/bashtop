@@ -12,21 +12,41 @@
 [![Sponsor](https://img.shields.io/badge/-Sponsor-red?logo=github)](https://github.com/sponsors/aristocratos)
 [![Coffee](https://img.shields.io/badge/-Buy%20me%20a%20Coffee-grey?logo=Ko-fi)](https://ko-fi.com/aristocratos)
 
+# Notice, [python version released!](https://github.com/aristocratos/bpytop) Please get this instead.
+
+[![bpytop](Imgs/bpytop.png)](https://github.com/aristocratos/bpytop)
+
+Bpytop, bashtop python port is now available at https://github.com/aristocratos/bpytop
+
+It's a lot faster and about a third as cpu heavy and has more features, including:
+
+* Mouse support
+
+* Toggleable mini mode
+
+* More customization
+
+* Graphs for memory consumption
+
+It's also a lot easier for me to bug fix and it's the project I'm actively working on, so please try to migrate to bpytop.
+
+#
+
 ## Index
 
 * [Documents](#documents)
 * [Description](#description)
 * [Features](#features)
-* [Themes](#themes) (Updated)
-* [Upcoming](#upcoming) (Python port)
+* [Themes](#themes)
 * [Support and funding](#support-and-funding)
-* [Compatibility](#compatibility) (OSX and FreeBSD Support)
-* [Dependencies](#dependencies) (Updated)
+* [Prerequisites](#prerequisites)
+* [Dependencies](#dependencies)
 * [Screenshots](#screenshots)
-* [Installation](#installation) (Updated)
-* [Configurability](#configurability) (Updated)
-* [TODO](#todo) (Updated)
+* [Installation](#installation)
+* [Configurability](#configurability)
+* [TODO](#todo)
 * [License](#license)
+
 
 ## Documents
 
@@ -65,21 +85,6 @@ User created themes should be placed in `$HOME/.config/bashtop/user_themes` to b
 
 Let me know if you want to contribute with new themes.
 
-## Upcoming
-
-~~Currently rewriting to use python3 [psutil](https://github.com/giampaolo/psutil) for data collection instead of linux specific tools.
-This will add python 3 and psutil as dependencies, but will make bashtop cross platform compatible.~~
-
-~~This will be integrated in to main version when done and add the possibility to switch between psutil and linux tools for users running linux.~~
-
-Bashtop is now Mac OS X and FreeBSD compatible!
-
-#### Python port
-
-Work on a complete python port ~~will begin this summer~~ has begun. My aim is to keep it compatible with pypy3 for a lot of added efficiency.
-
-PyPyTop?
-
 ## Support and funding
 
 Bug fixes and updates might be slow during normal workdays since I work full time as an industrial worker and don't have much time or energy left during the week.
@@ -95,21 +100,21 @@ Also added donation links for [paypal](https://paypal.me/aristocratos) and [ko-f
 
 Any support is greatly appreciated!
 
-## Compatibility
+## Prerequisites
 
-Should work on most modern linux distributions, on Mac OS X and on FreeBSD.
+#### Mac Os X
 
-Will not display correctly on the standard terminal on OSX!
+Will not display correctly in the standard terminal!
 Recommended alternative [iTerm2](https://www.iterm2.com/)
 
-Will also need to be run as superuser on OSX to display stats for processes not owned by user.
+Will also need to be run as superuser to display stats for processes not owned by user.
 
-The disk io stats on OSX and FreeBSD shows iostats for all disks at the top instead of per disk.
+#### Linux, Mac Os X and FreeBSD
 
 For correct display, a terminal with support for:
 
-* 24-bit truecolor
-* Wide characters
+* 24-bit truecolor ([See list of terminals with truecolor support](https://gist.github.com/XVilka/8346728))
+* Wide characters (Are sometimes problematic in web-based terminals)
 
 Also needs a UTF8 locale and a font that covers:
 
@@ -144,7 +149,7 @@ Bash version 5 is highly recommended to make use of $EPOCHREALTIME variable inst
 
 **[Python3](https://www.python.org/downloads/)** (v3.6 or later)
 
-**[psutil python module](https://github.com/giampaolo/psutil)**
+**[psutil python module](https://github.com/giampaolo/psutil)** (v5.7.0 or later)
 
 ## Optionals for additional stats
 
@@ -177,11 +182,27 @@ Options menu.
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 ```
 
->Install dependencies
+
+
+>If you got python 3.6 or later installed outside of brew:
 
 ``` bash
-brew install bash coreutils gnu-sed python3 git
-pip3 install psutil
+sudo python3 -m ensurepip
+sudo python3 -m pip install psutil
+```
+
+>If you haven't got python3 installed:
+
+```
+brew install python3
+python3 -m pip install psutil
+```
+
+>Install dependencies
+
+
+``` bash
+brew install bash coreutils gnu-sed git
 ```
 
 >Install optional dependency osx-cpu-temp
@@ -195,9 +216,7 @@ brew install osx-cpu-temp
 >Install with pkg and pip
 
 ``` bash
-sudo pkg install coreutils gsed python3 git
-sudo python3 -m ensurepip
-sudo pip3 install psutil
+sudo pkg install coreutils gsed git py37-psutil
 ```
 
 #### Manual installation Linux, OSX and FreeBSD
@@ -214,6 +233,16 @@ sudo make install
 
 ``` bash
 sudo make uninstall
+```
+
+#### FreeBSD package
+
+Available in [FreeBSD ports](https://www.freshports.org/sysutils/bashtop/)
+
+Install pre-built pacakge
+
+``` bash
+sudo pkg install bashtop
 ```
 
 #### Arch based
@@ -240,6 +269,16 @@ Or use quick installation:
 
 ``` bash
  sudo ./build --remove
+```
+
+#### Guix based
+
+Available in [official Guix repository](https://git.savannah.gnu.org/cgit/guix.git/tree/gnu/packages/admin.scm) since 6bbd0fd2
+
+>Installation
+
+``` bash
+guix install bashtop
 ```
 
 #### Ubuntu based
@@ -296,20 +335,24 @@ Config files stored in "$HOME/.config/bashtop" folder
 #### bashtop.cfg: (auto generated if not found)
 
 ```bash
-#? Config file for bashtop v. 0.9.9
+#? Config file for bashtop v. 0.9.21
 
-#* Color theme, looks for a .theme file in "$HOME/.config/bashtop/themes" and "$HOME/.config/bashtop/user_themes", "Default" for builtin default theme
+#* Color theme, looks for a .theme file in "$HOME/.config/bashtop/themes" and "$HOME/.config/bashtop/user_themes"
+#* Should be prefixed with either "themes/" or "user_themes/" depending on location, "Default" for builtin default theme
 color_theme="Default"
 
 #* Update time in milliseconds, increases automatically if set below internal loops processing time, recommended 2000 ms or above for better sample times for graphs
 update_ms="2500"
 
-#* Processes sorting, "pid" "program" "arguments" "threads" "user" "memory" "cpu lazy" "cpu responsive" "tree"
-#* "cpu lazy" updates sorting over time, "cpu responsive" updates sorting directly at a cpu usage cost
+#* Processes sorting, "pid" "program" "arguments" "threads" "user" "memory" "cpu lazy" "cpu responsive"
+#* "cpu lazy" updates sorting over time, "cpu responsive" updates sorting directly
 proc_sorting="cpu lazy"
 
 #* Reverse sorting order, "true" or "false"
 proc_reversed="false"
+
+#* Show processes as a tree
+proc_tree="false"
 
 #* Check cpu temperature, only works if "sensors", "vcgencmd" or "osx-cpu-temp" commands is available
 check_temp="true"
@@ -365,8 +408,7 @@ Might finish off items out of order since I usually work on multiple at a time.
 - [ ] Add gpu temp and usage. (If feasible)
 - [x] Add io stats for disks.
 - [ ] Add cpu and mem stats for docker containers. (If feasible)
-- [ ] Change process list to line scroll instead of page change.
-- [ ] Add option for custom color gradient in process list in theme settings.
+- [x] Change process list to line scroll instead of page change.
 - [ ] Add optional window for tailing log files.
 - [ ] Add options for resizing all boxes.
 - [ ] Add command line argument parsing.
